@@ -5,6 +5,6 @@ import retrofit2.http.GET
 
 interface APIInterface {
 
-    @GET("7c27fa874f0a4d46e4d4")
-    fun getAllVideos() : Call<VideoModel>
+    @GET("bikashthapa01/myvideos-android-app/master/data.json")
+    fun getAllVideos() : Call<MainModel>
 }

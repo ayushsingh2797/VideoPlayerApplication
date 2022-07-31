@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 
 class VideosViewModel:ViewModel() {
 
-    var videoListLiveData : MutableLiveData<VideoModel>? = null
+    var videoListLiveData : MutableLiveData<List<VideoModelNew>>? = null
     var videoListRepo:VideoListRepo = VideoListRepo.instance
 
     fun getVideoList(){
-        videoListLiveData =videoListRepo.fetchVideoSFromAPI()
+        videoListLiveData =videoListRepo.fetchVideosFromAPI()
     }
 
 }
