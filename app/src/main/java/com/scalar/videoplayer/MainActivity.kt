@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -25,14 +24,10 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.BandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.scalar.videoplayer.databinding.ActivityMainBinding
-import okhttp3.internal.Util
-import java.text.FieldPosition
 
 class MainActivity : AppCompatActivity(), AdapterListenerInterface {
 
@@ -46,7 +41,6 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
     lateinit var btMuteUnMute: ImageView
     var isFullScreen: Boolean = false
     var mute: Boolean = false
-    private var mVideosList:MutableList<VideoModelNew>? = null
     private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +75,8 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
         val trackSelector: TrackSelector =
             DefaultTrackSelector(AdaptiveTrackSelection.Factory(bandwidthMeter))
         simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector, loadControl)
+        mainBinding.pvPlayerView.player = simpleExoPlayer
+        mainBinding.pvPlayerView.keepScreenOn = true
     }
 
     private fun loadVideoUrl(model: VideoModelNew, position: Int) {
@@ -92,15 +88,14 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
             val mediaSource: MediaSource =
                 ExtractorMediaSource(videoUrl, factory, extractorsFactory, null, null)
 
-            mainBinding.pvPlayerView.player = simpleExoPlayer
-            mainBinding.pvPlayerView.keepScreenOn = true
+
             simpleExoPlayer.prepare(mediaSource)
             simpleExoPlayer.playWhenReady = true
-            setCircularProgressBar()
+            setCircularProgressBar(position)
         }
         simpleExoPlayer.addListener(object : Player.EventListener {
             override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
-                setCircularProgressBar()
+                setCircularProgressBar(position)
             }
 
             override fun onTracksChanged(
@@ -115,7 +110,7 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
             }
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                setCircularProgressBar()
+                setCircularProgressBar(position)
                 if (playbackState == Player.STATE_BUFFERING)
                     mainBinding.progressBar.visibility = View.VISIBLE
                 else if (playbackState == Player.STATE_READY)
@@ -139,7 +134,7 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
             }
 
             override fun onPositionDiscontinuity(reason: Int) {
-                setCircularProgressBar()
+                setCircularProgressBar(position)
             }
 
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
@@ -147,7 +142,7 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
             }
 
             override fun onSeekProcessed() {
-                setCircularProgressBar()
+                setCircularProgressBar(position)
             }
 
 
@@ -188,11 +183,11 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
         }
     }
 
-    private fun setCircularProgressBar() {
+    private fun setCircularProgressBar(position: Int) {
         val runnable = Runnable {
-            videosViewModel.videoListLiveData?.value?.get(mPosition)?.progress =
+            videosViewModel.videoListLiveData?.value?.get(position)?.progress =
                 simpleExoPlayer.bufferedPercentage
-            videoRVAdapter.notifyItemChanged(mPosition)
+            videoRVAdapter.notifyItemChanged(position)
         }
         handler.postDelayed(runnable, 500)
     }
@@ -357,6 +352,15 @@ class MainActivity : AppCompatActivity(), AdapterListenerInterface {
         }
         videoList.sortBy { it.views }
         videosViewModel.videoListLiveData?.value = videoList
+    }
+
+    override fun onBackPressed() {
+        if(isFullScreen) {
+            isFullScreen = false
+            playInFullScreen(false)
+        }
+        else
+            super.onBackPressed()
     }
 
 }
