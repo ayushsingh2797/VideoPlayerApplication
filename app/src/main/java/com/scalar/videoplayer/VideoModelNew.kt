@@ -6,6 +6,6 @@ data class VideoModelNew(
     val subtitle: String,
     val thumb: String,
     val title: String,
-    val views: String,
+    var views: Int,
     var progress: Int = 0
 )

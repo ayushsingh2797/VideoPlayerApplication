@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/exo_icon_rewind"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="30dp"
                 />
 
             <ImageView
@@ -43,7 +43,7 @@
                 android:id="@+id/exo_ffwd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="30dp"
                 android:src="@drawable/exo_icon_fastforward"/>
 
         </LinearLayout>
@@ -90,8 +90,8 @@
                     tools:text="15:00"/>
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/exo_fullscreen"
                     android:src="@drawable/exo_controls_fullscreen_enter"
                     />
@@ -108,6 +108,16 @@
                 />
 
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/exo_mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_volume_up"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="8dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

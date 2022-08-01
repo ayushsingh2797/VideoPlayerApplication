@@ -1,6 +1,7 @@
 package com.scalar.videoplayer
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 
 object UtilityFunctions {
@@ -22,5 +23,17 @@ object UtilityFunctions {
             return false
         }
         return false
+    }
+
+    fun setViewsForVideo(context: Context,title:String,views:Int){
+        val sharedPreference = context.getSharedPreferences("VIEWS_DATA",Context.MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.putInt(title,views)
+        editor.apply()
+    }
+
+    fun getViewsOfVideos(context: Context,title: String):Int{
+        val sharedPreference = context.getSharedPreferences("VIEWS_DATA",Context.MODE_PRIVATE)
+        return sharedPreference.getInt(title,0)
     }
 }
